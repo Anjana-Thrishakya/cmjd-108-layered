@@ -4,6 +4,8 @@
  */
 package edu.ijse.layerd.view;
 
+import edu.ijse.layerd.controller.ItemController;
+import edu.ijse.layerd.dto.ItemDto;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -13,8 +15,9 @@ import javax.swing.table.DefaultTableModel;
  * @author anjan
  */
 public class ItemView extends javax.swing.JFrame {
-    
-    
+
+    private ItemController itemController = new ItemController();
+
     public ItemView() {
         initComponents();
         loadTable();
@@ -199,19 +202,19 @@ public class ItemView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        
+
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void tblItemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblItemMouseClicked
-        
+
     }//GEN-LAST:event_tblItemMouseClicked
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        
+
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        
+
     }//GEN-LAST:event_btnDeleteActionPerformed
 
 
@@ -234,8 +237,7 @@ public class ItemView extends javax.swing.JFrame {
     private javax.swing.JTextField txtUnitParice;
     // End of variables declaration//GEN-END:variables
 
-
-    public void loadTable(){
+    public void loadTable() {
         try {
             String columns[] = {"Item Code", "Item Description", "Pack Size", "Unit Price", "QoH"};
             DefaultTableModel dtm = new DefaultTableModel(columns, 0) {
@@ -244,9 +246,15 @@ public class ItemView extends javax.swing.JFrame {
                 }
             };
             tblItem.setModel(dtm);
-            
-            
-            
+
+            ArrayList<ItemDto> itemDtos = itemController.getAll();
+            if (itemDtos != null) {
+                for (ItemDto itemDto : itemDtos) {
+                    Object[] rowData = {itemDto.getItemCode(), itemDto.getDescription(), itemDto.getPackSize(), itemDto.getUnitPrice(), itemDto.getQoh()};
+                    dtm.addRow(rowData);
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -261,5 +269,75 @@ public class ItemView extends javax.swing.JFrame {
         txtQoh.setText("");
     }
 
-   
+    private void saveItem() {
+        ItemDto itemDto = new ItemDto(
+                txtCode.getText(),
+                txtDescription.getText(),
+                txtPack.getText(),
+                Double.parseDouble(txtUnitParice.getText()),
+                Integer.parseInt(txtQoh.getText())
+        );
+
+        try {
+            String resp = itemController.save(itemDto);
+            JOptionPane.showMessageDialog(this, resp);
+            loadTable();
+            clearForm();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
+    private void updateItem() {
+        ItemDto itemDto = new ItemDto(
+                txtCode.getText(),
+                txtDescription.getText(),
+                txtPack.getText(),
+                Double.parseDouble(txtUnitParice.getText()),
+                Integer.parseInt(txtQoh.getText())
+        );
+
+        try {
+            String resp = itemController.update(itemDto);
+            JOptionPane.showMessageDialog(this, resp);
+            loadTable();
+            clearForm();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
+    private void deleteItem() {
+        try {
+            String resp = itemController.delete(txtCode.getText());
+            JOptionPane.showMessageDialog(this, resp);
+            loadTable();
+            clearForm();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
+    private void searchItem() {
+        String itemCode = tblItem.getValueAt(tblItem.getSelectedRow(), 0).toString();
+        try {
+            ItemDto itemDto = itemController.search(itemCode);
+            if (itemDto != null) {
+                txtCode.setText(itemDto.getItemCode());
+                txtDescription.setText(itemDto.getDescription());
+                txtPack.setText(itemDto.getPackSize());
+                txtUnitParice.setText(Double.toString(itemDto.getUnitPrice()));
+                txtQoh.setText(Integer.toString(itemDto.getQoh()));
+            } else {
+                JOptionPane.showMessageDialog(this, "Item not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
 }
