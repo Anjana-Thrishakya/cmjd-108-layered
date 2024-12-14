@@ -4,9 +4,11 @@
  */
 package edu.ijse.layerd.dao.custom.impl;
 
+import edu.ijse.layerd.dao.CrudUtil;
 import edu.ijse.layerd.dao.custom.CustomerDao;
 import edu.ijse.layerd.entity.CustomerEntity;
 import java.util.ArrayList;
+import java.sql.ResultSet;
 
 /**
  *
@@ -16,27 +18,64 @@ public class CustomerDaoImpl implements CustomerDao{
 
     @Override
     public boolean save(CustomerEntity t) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return CrudUtil.executeUpdate("INSERT INTO Customer VALUES(?,?,?,?,?,?,?,?,?)",
+                t.getId(),
+                t.getTitle(),
+                t.getName(),
+                t.getDob(),
+                t.getSalary(),
+                t.getAddress(),
+                t.getCity(),
+                t.getProvince(),
+                t.getPostalCode());
     }
 
     @Override
     public boolean update(CustomerEntity t) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return CrudUtil.executeUpdate("UPDATE Customer SET CustTitle=?, CustName=?, DOB=?,"
+                + " salary=?, CustAddress=?, City=?, Province=?,"
+                + " PostalCode=? WHERE CustID = ?",
+                t.getTitle(),
+                t.getName(),
+                t.getDob(),
+                t.getSalary(),
+                t.getAddress(),
+                t.getCity(),
+                t.getProvince(),
+                t.getPostalCode(),
+                t.getId());
     }
 
     @Override
     public boolean delete(String id) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return CrudUtil.executeUpdate("DELETE from Customer WHERE CustID=?", id);
     }
 
     @Override
     public CustomerEntity search(String id) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        ResultSet rst = CrudUtil.extecuteQuery("SELECT * FROM Customer WHERE CustID = ?", id);
+        if(rst.next()){
+            return new CustomerEntity(rst.getString("CustID"), rst.getString("CustTitle"),
+                    rst.getString("CustName"), rst.getString("DOB"),
+                    rst.getDouble("salary"), rst.getString("CustAddress"),
+                    rst.getString("City"),
+                    rst.getString("Province"), rst.getString("PostalCode"));
+        }
+        return null;
     }
 
     @Override
     public ArrayList<CustomerEntity> getAll() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        ArrayList<CustomerEntity> customerEntities = new ArrayList<>();
+        ResultSet rst = CrudUtil.extecuteQuery("SELECT * FROM Customer");
+        while (rst.next()) {            
+            customerEntities.add(new CustomerEntity(rst.getString("CustID"), rst.getString("CustTitle"),
+                    rst.getString("CustName"), rst.getString("DOB"),
+                    rst.getDouble("salary"), rst.getString("CustAddress"),
+                    rst.getString("City"),
+                    rst.getString("Province"), rst.getString("PostalCode")));
+        }
+        return customerEntities;
     }
     
 }
