@@ -7,6 +7,7 @@ package edu.ijse.layerd.controller;
 import edu.ijse.layerd.dto.CustomerDto;
 import edu.ijse.layerd.service.ServiceFactory;
 import edu.ijse.layerd.service.custom.CustomerService;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,5 +17,21 @@ public class CustomerController {
     CustomerService customerService = (CustomerService) ServiceFactory.getInstance().getService(ServiceFactory.ServiceType.CUSTOMER);
     public CustomerDto searchCustomer(String id) throws Exception{
         return customerService.search(id);
+    }
+    
+    public String save(CustomerDto dto) throws Exception{
+        return customerService.save(dto);
+    }
+    
+     public String update(CustomerDto dto) throws Exception{
+        return customerService.update(dto);
+    }
+    
+    public String delete(String id) throws Exception{
+        return customerService.delete(id);
+    }
+    
+    public ArrayList<CustomerDto> getAll() throws Exception{
+        return customerService.getAll();
     }
 }
