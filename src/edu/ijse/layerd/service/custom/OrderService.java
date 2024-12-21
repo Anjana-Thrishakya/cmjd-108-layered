@@ -5,11 +5,12 @@
 package edu.ijse.layerd.service.custom;
 
 import edu.ijse.layerd.dto.OrderDto;
+import edu.ijse.layerd.service.SuperService;
 
 /**
  *
  * @author anjan
  */
-public interface OrderService {
+public interface OrderService extends SuperService{
     String placeOrder(OrderDto orderDto) throws Exception;
 }

@@ -7,6 +7,7 @@ package edu.ijse.layerd;
 import edu.ijse.layerd.db.DBConnection;
 import edu.ijse.layerd.view.CustomerForm;
 import edu.ijse.layerd.view.ItemView;
+import edu.ijse.layerd.view.OrderView;
 import java.sql.SQLException;
 
 /**
@@ -20,7 +21,8 @@ public class Main {
      */
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         //new ItemView().setVisible(true);
-        new CustomerForm().setVisible(true);
+        //new CustomerForm().setVisible(true);
+        new OrderView().setVisible(true);
     }
     
 }
