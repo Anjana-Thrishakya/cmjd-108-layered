@@ -8,8 +8,14 @@ import edu.ijse.layerd.dao.DaoFactory;
 import edu.ijse.layerd.dao.custom.ItemDao;
 import edu.ijse.layerd.dao.custom.OrderDao;
 import edu.ijse.layerd.dao.custom.OrderDetailDao;
+import edu.ijse.layerd.db.DBConnection;
+import edu.ijse.layerd.dto.OrderDetailDto;
 import edu.ijse.layerd.dto.OrderDto;
+import edu.ijse.layerd.entity.ItemEntity;
+import edu.ijse.layerd.entity.OrderDetailEntity;
+import edu.ijse.layerd.entity.OrderEntity;
 import edu.ijse.layerd.service.custom.OrderService;
+import java.sql.Connection;
 
 /**
  *
@@ -23,7 +29,60 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public String placeOrder(OrderDto orderDto) throws Exception {
-        return null;
+        Connection connection = DBConnection.getInstance().getConnection();
+        try {
+            connection.setAutoCommit(false);
+            OrderEntity orderEntity = new OrderEntity(orderDto.getOrderId(), orderDto.getCustId(), orderDto.getDate());
+            if(orderDao.save(orderEntity)){
+                boolean isOrderDetailSaved = true;
+                
+                for (OrderDetailDto orderDetailDto : orderDto.getOrderDetailDtos()) {
+                    OrderDetailEntity orderDetailEntity = new OrderDetailEntity(orderDto.getOrderId(), orderDetailDto.getItemCode(), orderDetailDto.getQty(), orderDetailDto.getDiscount());
+                    if(!orderDetailDao.save(orderDetailEntity)){
+                        isOrderDetailSaved = false;
+                    }
+                }
+                
+                if(isOrderDetailSaved){
+                    boolean isItemIptaded = true;
+                    
+                    for (OrderDetailDto orderDetailDto : orderDto.getOrderDetailDtos()) {
+                        ItemEntity itemEntity = itemDao.search(orderDetailDto.getItemCode());
+                        if(itemEntity != null){
+                            itemEntity.setQoh(itemEntity.getQoh() - orderDetailDto.getQty());
+                            if(!itemDao.update(itemEntity)){
+                                isItemIptaded = false;
+                            }
+                        } else {
+                            connection.rollback();
+                            return "Item Not Found";
+                        }
+                    }
+                    
+                    if(isItemIptaded){
+                        connection.commit();
+                        return "Success";
+                    } else {
+                        connection.rollback();
+                        return "Item Update Error";
+                    }
+                    
+                } else {
+                    connection.rollback();
+                    return "Order Detail Save Error";
+                }
+                
+            } else {
+                connection.rollback();
+                return "Order Save Error";
+            }
+        } catch (Exception e) {
+            connection.rollback();
+            e.printStackTrace();
+            throw e;
+        } finally {
+            connection.setAutoCommit(true);
+        }
     }
     
 }
