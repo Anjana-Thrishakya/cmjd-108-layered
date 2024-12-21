@@ -11,17 +11,24 @@ package edu.ijse.layerd.entity;
 public class OrderDetailEntity {
     private String orderId;
     private String itemCode;
-    private double unitPrice;
     private int qty;
+    private double disount;
 
     public OrderDetailEntity() {
     }
 
-    public OrderDetailEntity(String orderId, String itemCode, double unitPrice, int qty) {
+    public OrderDetailEntity(String orderId, String itemCode, int qty, double disount) {
         this.orderId = orderId;
         this.itemCode = itemCode;
-        this.unitPrice = unitPrice;
         this.qty = qty;
+        this.disount = disount;
+    }
+
+    
+    
+    @Override
+    public String toString() {
+        return "OrderDetailEntity{" + "orderId=" + getOrderId() + ", itemCode=" + getItemCode() + ", qty=" + getQty() + ", disount=" + getDisount() + '}';
     }
 
     /**
@@ -53,20 +60,6 @@ public class OrderDetailEntity {
     }
 
     /**
-     * @return the unitPrice
-     */
-    public double getUnitPrice() {
-        return unitPrice;
-    }
-
-    /**
-     * @param unitPrice the unitPrice to set
-     */
-    public void setUnitPrice(double unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
-    /**
      * @return the qty
      */
     public int getQty() {
@@ -80,10 +73,19 @@ public class OrderDetailEntity {
         this.qty = qty;
     }
 
-    @Override
-    public String toString() {
-        return "OrderDetailEntity{" + "orderId=" + orderId + ", itemCode=" + itemCode + ", unitPrice=" + unitPrice + ", qty=" + qty + '}';
+    /**
+     * @return the disount
+     */
+    public double getDisount() {
+        return disount;
     }
-    
+
+    /**
+     * @param disount the disount to set
+     */
+    public void setDisount(double disount) {
+        this.disount = disount;
+    }
+   
     
 }

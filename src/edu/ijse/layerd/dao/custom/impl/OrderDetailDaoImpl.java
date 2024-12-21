@@ -4,6 +4,7 @@
  */
 package edu.ijse.layerd.dao.custom.impl;
 
+import edu.ijse.layerd.dao.CrudUtil;
 import edu.ijse.layerd.dao.custom.OrderDetailDao;
 import edu.ijse.layerd.entity.OrderDetailEntity;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class OrderDetailDaoImpl implements OrderDetailDao{
 
     @Override
     public boolean save(OrderDetailEntity t) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return CrudUtil.executeUpdate("INSERT INTO orderdetail VALUES(?,?,?,?)", t.getOrderId(), t.getItemCode(), t.getQty(), t.getDisount());
     }
 
     @Override
